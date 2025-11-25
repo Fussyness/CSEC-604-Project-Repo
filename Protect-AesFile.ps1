@@ -65,6 +65,10 @@
 # Parameters
 ################################################################################
 
+#defining Protect-AesFile as a function so the execution part (the try block) doesn't run when you dot source the file (for e.g in the script for encrypting a drive)
+function Protect-AesFile
+{
+
 [CmdletBinding(
     DefaultParameterSetName = 'Password',
     SupportsShouldProcess
@@ -72,7 +76,8 @@
 
 param (
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
+    #remove path-type-leaf check, so the encryption process doesn't stop midway, if there is a file who doesn't pass this check (for e.g DumpStack.log.tmp)
+    #[ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
     [Alias('FullName')]
     [String]
     $InFile,
@@ -219,6 +224,7 @@ try {
     if ($PSCmdlet.ShouldProcess($InFile)) {
         # Create input and output streams.
         $inStream = New-Object System.IO.FileStream $InFile, Open, Read
+
         $outStream = New-Object System.IO.MemoryStream
 
         # Get the salt as a byte array.
@@ -334,4 +340,5 @@ try {
         Write-Verbose 'Dispose AES instance.'
         $aes.Dispose()
     }
+}
 }
