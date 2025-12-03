@@ -59,7 +59,8 @@
 ################################################################################
 # Parameters
 ################################################################################
-
+function Unprotect-AesFile
+{
 [CmdletBinding(
     DefaultParameterSetName = 'Password',
     SupportsShouldProcess
@@ -67,7 +68,7 @@
 
 param (
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
+    #[ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
     [Alias('FullName')]
     [String]
     $InFile,
@@ -315,4 +316,5 @@ try {
         Write-Verbose 'Dispose AES instance.'
         $aes.Dispose()
     }
+}
 }
