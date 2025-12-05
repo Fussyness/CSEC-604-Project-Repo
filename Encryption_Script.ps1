@@ -1,11 +1,11 @@
 #Loads encryption function from the Protect-AesFile
-. "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Protect-AesFile.ps1" 
+. "C:\Path\Protect-AesFile.ps1" 
 
 #path to the source file/folder/drive to be encrypted 
-$FilesToEncrypt = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Example_Test_Files"
+$FilesToEncrypt = "C:\Path\Example_Test_Files"
 
 #storage path where encrypted files will be stored temporarily 
-$Storage = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Storage" 
+$Storage = "C:\Path\Storage" 
 
 #exclude critical files from encrypting so program can run smoothly and the machine isn't damaged 
 $ExcludePattern = "^C:\\Windows|^C:\\Program Files|^C:\\Program Files \(x86\)"

@@ -1,11 +1,11 @@
 #Loads decryption function from the Unprotect-AesFile
-. "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Unprotect-AesFile.ps1" 
+. "C:\Path\Unprotect-AesFile.ps1" 
 
 #path to the source file/folder/drive to be decrypted 
-$FilestoDecrypt = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Example_Test_Files"
+$FilestoDecrypt = "C:\Path\Example_Test_Files"
 
 #storage path where decrypted files will be stored temporarily 
-$Storage = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Storage" 
+$Storage = "C:\Path\Storage" 
 
 #Gets each object from the path given by using a for loop and recursion is used to reach all files if needed 
 #errors (mainly access based) are ignored so the program can run smoothly 
