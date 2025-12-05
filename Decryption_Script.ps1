@@ -25,7 +25,6 @@ Get-ChildItem -Path $FilestoDecrypt -File -Recurse -Force -ErrorAction SilentlyC
     ForEach-Object {
         # Calculate new path, preserving folder structure in the output folder 
         $relativePath = $_.FullName.Substring($FilestoDecrypt.Length)
-        $newFilePath   = Join-Path -Path $Storage -ChildPath ($relativePath + ".enc")
         
         # Call the existing function Unprotect-AesFile on each object 
         try {
@@ -55,9 +54,9 @@ Get-ChildItem -Path $FilestoDecrypt -File -Recurse -Force -ErrorAction SilentlyC
 	    #Decrypt
 	    $PlainText = $Decryptor.TransformFinalBlock($CipherText, 0, $CipherText.Length)
 
-	    [System.IO.File]::WriteAllBytes($newFilePath, $PlainText)
+	    [System.IO.File]::WriteAllBytes($Storage, $PlainText)
 
-            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($newFilePath))
+            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($Storage))
         }
         catch {
             Write-Warning "Unable to decrypt: $($_.FullName). Receiving error: $($_.Message)"

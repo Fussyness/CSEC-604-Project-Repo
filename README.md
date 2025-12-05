@@ -14,7 +14,3 @@ These scripts were tested and successfully run in Powershell with admin privileg
 2. The variables for the files you want to encrypt/decrypt, the temporary storage space for the files, and the file containing the password used to generate the Keys must be added onto the command as well by giving the path to the folder/files. This would like -FilesToEncrypt / -FilestoDecrypt, -Storage, and -Password, followed by the respective file paths in quotes.
 3. For example, a working command to encrypt the folder of test files inside the project folder would look like this: powershell.exe -ExecutionPolicy Bypass -File "C:\\CSEC-604-Project-Repo\\Encryption\_Script.ps1" -FilesToEncrypt "C:\\CSEC-604-Project-Repo\\Example\_Test\_Files" -Storage "C:\\CSEC-604-Project-Repo" -Password "C:\\CSEC-604-Project-Repo\\Password.txt"
 4. Doing the same to decrypt them would look like this: powershell.exe -ExecutionPolicy Bypass -File "C:\\CSEC-604-Project-Repo\\Decryption\_Script.ps1" -FilesToDecrypt "C:\\CSEC-604-Project-Repo\\Example\_Test\_Files" -Storage "C:\\CSEC-604-Project-Repo" -Password "C:\\CSEC-604-Project-Repo\\Password.txt"
-5. Example screenshots of these commands running are included in the folder "Demo Images"
-
-
-

