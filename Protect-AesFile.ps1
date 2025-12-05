@@ -76,8 +76,6 @@ function Protect-AesFile
 
 param (
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    #remove path-type-leaf check, so the encryption process doesn't stop midway, if there is a file who doesn't pass this check (for e.g DumpStack.log.tmp)
-    [ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
     [Alias('FullName')]
     [String]
     $InFile,

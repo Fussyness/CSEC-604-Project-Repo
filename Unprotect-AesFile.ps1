@@ -66,9 +66,10 @@ function Unprotect-AesFile
     SupportsShouldProcess
 )]
 
+
+
 param (
     [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    #[ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
     [Alias('FullName')]
     [String]
     $InFile,

